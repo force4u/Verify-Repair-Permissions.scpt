@@ -4,10 +4,18 @@ Verify-Repair-Permissions.scpt
 10.11のディスクユーティリティ対応
 
 20160319　初回作成
-
-
-
+20160319　設定項目を追加
 *)
+
+---設定項目
+#１の場合はアップルスクリプト内で処理
+#２の場合はターミナルを呼び出しての処理
+#ターミナル処理の場合のキャンセル時に応答が無くなる場合があるため
+#１を推奨
+set numApplication to 1 as number
+#
+
+
 tell application "Finder"
 	activate
 	----選択用のリストを定義
@@ -37,10 +45,20 @@ else
 	return
 end if
 
----ターミナルでコマンドを開く
-tell application "Terminal"
-	launch
-	activate
-	do script theCmdText
-end tell
 
+if numApplication is 1 then
+	log "処理を開始します。処理が終わるまでしばらくお待ち下さい"
+	do shell script theCmdText with administrator privileges
+	log "処理が終了しました"
+else if numApplication is 2 then
+	
+	---ターミナルでコマンドを開く
+	tell application "Terminal" to launch
+	
+	tell application "Terminal"
+		activate
+		do script theCmdText
+	end tell
+else
+	return
+end if
